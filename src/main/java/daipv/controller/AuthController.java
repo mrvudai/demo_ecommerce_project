@@ -5,19 +5,21 @@ import daipv.DTO.request.SignupForm;
 import daipv.DTO.response.JWTResponse;
 import daipv.DTO.response.ResponseMessage;
 import daipv.service.serviceIMPL.AuthService;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
+@CrossOrigin("*")
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
-    @Autowired
-    private AuthService authService;
+
+    private final AuthService authService;
 
     @PostMapping("/signUp")
     public ResponseEntity<ResponseMessage> signUp(@RequestBody SignupForm signupForm){

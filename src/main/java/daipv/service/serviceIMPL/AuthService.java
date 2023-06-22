@@ -12,6 +12,10 @@ import daipv.security.userprincipal.CustomUserDetails;
 import daipv.service.Iservice.IRoleService;
 import daipv.service.Iservice.IUserService;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,24 +29,24 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@Data
 public class AuthService {
 
+    @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
     private IUserService userService;
 
+    @Autowired
     private IRoleService roleService;
 
+    @Autowired
     private JwtProvider jwtProvider;
 
-    private final Roles ROLE_ADMIN = roleService.findByRoleName(RoleName.ADMIN);
-
-    private final Roles ROLE_PM = roleService.findByRoleName(RoleName.PM);
-
-    private final Roles ROLE_USER = roleService.findByRoleName(RoleName.USER);
-
+    @Autowired
     private PasswordEncoder encoder;
+
     public ResponseMessage register(SignupForm signupForm){
         if (userService.existsByUserName(signupForm.getUsername())){
             return new ResponseMessage("username is existed");
@@ -55,25 +59,25 @@ public class AuthService {
         Set<Roles> rolesSet = new HashSet<>();
 
         if (signupForm.getRoles() == null || signupForm.getRoles().isEmpty()){
-            rolesSet.add(ROLE_USER);
+            rolesSet.add(roleService.findByRoleName(RoleName.USER));
         }else {
             for (String role: roleCreate) {
                 switch (role){
                     case "admin":
-                        rolesSet.add(ROLE_ADMIN);
+                        rolesSet.add(roleService.findByRoleName(RoleName.ADMIN));
                     case "pm" :
-                        rolesSet.add(ROLE_PM);
+                        rolesSet.add(roleService.findByRoleName(RoleName.PM));
                     case "user":
-                        rolesSet.add(ROLE_USER);
+                        rolesSet.add(roleService.findByRoleName(RoleName.USER));
                         break;
-                    default:   rolesSet.add(ROLE_USER);
+                    default:   rolesSet.add(roleService.findByRoleName(RoleName.USER));
                 }
             }
         }
         Users users = new Users(signupForm.getUsername(), signupForm.getEmail(), encoder.encode(signupForm.getPassword()), rolesSet);
         if (userService.save(users)){
-            return new ResponseMessage("register failed!");
-        }else return new ResponseMessage("register success!");
+            return new ResponseMessage("register success!");
+        }else return new ResponseMessage("register failed!");
     }
 
     public JWTResponse login(SignInForm signInForm){

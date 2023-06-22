@@ -22,15 +22,19 @@ public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name="userName")
-    @Size(min = 6)
+//    @Size(min = 6)
     private String userName;
+
     @Email
     @Column(name = "email")
     private  String email;
+
     @Column(name ="password")
     @Size(min = 6)
     private String password;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "USER_ROLE",
             joinColumns = @JoinColumn(name = "user_id"),
