@@ -13,7 +13,7 @@ public class UserService implements IUserService {
     @Autowired
     IUserRepo repo;
     @Override
-    public Page<Users> findAll(Long aLong, Pageable pageable) {
+    public Page<Users> findAll(Pageable pageable) {
         return repo.findAll(pageable);
     }
 
