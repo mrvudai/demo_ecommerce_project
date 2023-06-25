@@ -1,32 +1,37 @@
 package daipv.callAPI;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import daipv.model.RoleName;
 import daipv.model.Roles;
 import daipv.model.Users;
+import daipv.security.userprincipal.CustomUserDetailsService;
+import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+@Component
+@RequiredArgsConstructor
 public class CallAPI {
-    public static void main(String[] args) {
-        docall2();
-    }
+    private final RestTemplate restTemplate;
 
+    @Autowired
+    private final CustomUserDetailsService userDetailsService;
 
     public static void docall2(){
         CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -95,4 +100,15 @@ public class CallAPI {
         }
     }
 
+    public Users getUser(){
+        String url = "http://localhost:8080/call";
+        ResponseEntity<Users> response = restTemplate.getForEntity(url, Users.class);
+        Users user = response.getBody();
+        return user;
+    }
+
+    public Users getUserByToken(){
+        Users users = userDetailsService.getUserPrincipal();
+        return users;
+    }
 }
