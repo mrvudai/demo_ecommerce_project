@@ -1,18 +1,17 @@
 package daipv.controller;
 
+import daipv.DTO.request.SignInForm;
 import daipv.callAPI.CallAPI;
 import daipv.model.Users;
+import daipv.security.userprincipal.CustomUserDetailsService;
 import daipv.service.Iservice.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.client.RestTemplate;
 
 @RestController
 @CrossOrigin("*")
@@ -20,6 +19,10 @@ import org.springframework.data.domain.Pageable;
 @RequiredArgsConstructor
 public class TestCallApi {
     private final IUserService service;
+
+    private final CustomUserDetailsService customUserDetailsService;
+
+    private final RestTemplate restTemplate;
 
     private final CallAPI callAPI;
     @GetMapping("/auth/call")
@@ -32,4 +35,18 @@ public class TestCallApi {
     public ResponseEntity<Users> call(){
         return new ResponseEntity<>(callAPI.getUserByToken(), HttpStatus.OK);
     }
+
+    @PostMapping("/testPost")
+    public ResponseEntity<String> loginToOtherSerVer(@RequestBody SignInForm signInForm){
+        String url = "http://localhost:8081/api/v4/auth/signin";
+//        Users users = customUserDetailsService.getUserPrincipal();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        HttpEntity<SignInForm> requestEntity = new HttpEntity<>(signInForm, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+        return response;
+
+    }
+
 }
