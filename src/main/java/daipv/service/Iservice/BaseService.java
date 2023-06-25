@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface BaseService<O, T> {
-    Page<O> findAll(T t, Pageable pageable);
+    Page<O> findAll(Pageable pageable);
 
     boolean save(O o);
 

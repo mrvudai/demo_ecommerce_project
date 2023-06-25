@@ -14,7 +14,7 @@ public class RoleService implements IRoleService {
     @Autowired
     IRoleRepo repo;
     @Override
-    public Page<Roles> findAll(Long aLong, Pageable pageable) {
+    public Page<Roles> findAll(Pageable pageable) {
         return repo.findAll(pageable);
     }
 
