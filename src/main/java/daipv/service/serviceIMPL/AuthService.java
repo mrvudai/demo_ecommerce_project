@@ -55,26 +55,11 @@ public class AuthService {
             return new ResponseMessage("email is existed!");
         }
 
-        Set<String> roleCreate = signupForm.getRoles();
         Set<Roles> rolesSet = new HashSet<>();
+        rolesSet.add(roleService.findByRoleName(RoleName.USER));
 
-        if (signupForm.getRoles() == null || signupForm.getRoles().isEmpty()){
-            rolesSet.add(roleService.findByRoleName(RoleName.USER));
-        }else {
-            for (String role: roleCreate) {
-                switch (role){
-                    case "admin":
-                        rolesSet.add(roleService.findByRoleName(RoleName.ADMIN));
-                    case "pm" :
-                        rolesSet.add(roleService.findByRoleName(RoleName.PM));
-                    case "user":
-                        rolesSet.add(roleService.findByRoleName(RoleName.USER));
-                        break;
-                    default:   rolesSet.add(roleService.findByRoleName(RoleName.USER));
-                }
-            }
-        }
         Users users = new Users(signupForm.getUsername(), signupForm.getEmail(), encoder.encode(signupForm.getPassword()), rolesSet);
+
         if (userService.save(users)){
             return new ResponseMessage("register success!");
         }else return new ResponseMessage("register failed!");

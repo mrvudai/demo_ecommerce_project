@@ -19,7 +19,4 @@ public class SignupForm {
     @Email
     private String email;
 
-    private Set<String> roles;
-
-
 }
